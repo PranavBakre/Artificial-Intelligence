@@ -32,7 +32,16 @@ namespace A_Star
                     return h;
                 }
             }
-            public int FScore => Level + HeuristicValue;
+
+            public int FScore 
+            { 
+                get
+                {
+                    return Level + HeuristicValue;
+                }
+
+            }
+
             public Node Parent { get; set; }
             public Node(string[,] NodeState, int level)
             {
@@ -107,6 +116,21 @@ namespace A_Star
                 return path;
             }
 
+            public bool IsEqual(Node temp)
+            {
+                for(int i = 0;i<Value.GetLength(0);i++)
+                {
+                    for (int j = 0; j<Value.GetLength(1);j++)
+                    {
+                        if (Value[i,j]!=temp.Value[i,j])
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
         }
 
         /*Function to accept the initial state and goal.
@@ -150,14 +174,18 @@ namespace A_Star
 
                 foreach ( var child in node.GenerateChildren())
                 {
-                    var InOpen = Open.Where(x => x.Value == child.Value).FirstOrDefault();
-                    var InClosed = Closed.Where(x => x.Value == child.Value).FirstOrDefault();
-                    if (InOpen != null && InOpen.Level>child.Level)
+                    var InOpen = Open.Where(x => x.IsEqual(child)).FirstOrDefault();
+                    var InClosed = Closed.Where(x => x.IsEqual(child)).FirstOrDefault();
+                    if (child.HeuristicValue==0)
+                    {
+                        return child;
+                    }
+                    if (InOpen != null && InOpen.HeuristicValue>child.HeuristicValue)
                     {
                         InOpen.Level = child.Level;
                         InOpen.Parent = child.Parent;
                     }
-                    else if (InClosed != null && InClosed.Level > child.Level)
+                    else if (InClosed != null && InClosed.HeuristicValue > child.HeuristicValue)
                     {
                         Closed.Remove(InClosed);
                         Open.Add(child);
@@ -167,7 +195,7 @@ namespace A_Star
                         Open.Add(child);
                     }
                 }
-                Open.OrderBy(x => x.FScore);
+                Open=Open.OrderBy(x => x.FScore).ToList();
             }
             return null;
         }
