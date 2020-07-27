@@ -107,8 +107,11 @@ namespace A_Star
                 return path;
             }
 
-          // public int Comparer (Node y)
         }
+
+        /*Function to accept the initial state and goal.
+         * Currently hardcoded to take for 3X3 matrix
+         */
         static string[,] GetState()
         {
             string[,] state=new string[3,3];
@@ -122,6 +125,14 @@ namespace A_Star
             }
             return state;
         }
+
+        /*
+         * A-Star Algorithm
+         * Open- List of opened nodes
+         * Closed- List of closed nodes
+         * InOpen: returns a  node if it is present in Open, else null
+         * InClosed: returns a  node if it is present in Closed, else null
+         */
 
         static Node AStar(Node root)
         {
@@ -139,14 +150,16 @@ namespace A_Star
 
                 foreach ( var child in node.GenerateChildren())
                 {
-                    if (Open.Where(x => x.Value == child.Value).FirstOrDefault()!=null && Open.Where(x=> x.Value == child.Value).FirstOrDefault().Level>child.Level)
+                    var InOpen = Open.Where(x => x.Value == child.Value).FirstOrDefault();
+                    var InClosed = Closed.Where(x => x.Value == child.Value).FirstOrDefault();
+                    if (InOpen != null && InOpen.Level>child.Level)
                     {
-                        Open.Where(x => x.Value == child.Value).FirstOrDefault().Level = child.Level;
-                        Open.Where(x => x.Value == child.Value).FirstOrDefault().Parent = child.Parent;
+                        InOpen.Level = child.Level;
+                        InOpen.Parent = child.Parent;
                     }
-                    else if (Closed.Where(x => x.Value == child.Value).FirstOrDefault() != null && Closed.Where(x=> x.Value == child.Value).FirstOrDefault().Level > child.Level)
+                    else if (InClosed != null && InClosed.Level > child.Level)
                     {
-                        Closed.Remove(Closed.Where(x => x.Value == child.Value).FirstOrDefault());
+                        Closed.Remove(InClosed);
                         Open.Add(child);
                     }
                     else
@@ -171,6 +184,8 @@ namespace A_Star
             var result=AStar(root);
             var Path = result.GetPath();
 
+
+            //Display the moves from Initial state to goal state
             foreach(var node in Path) 
             {
                 var RowCount = node.Value.GetLength(0);
