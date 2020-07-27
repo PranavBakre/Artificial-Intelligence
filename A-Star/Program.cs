@@ -180,12 +180,12 @@ namespace A_Star
                     {
                         return child;
                     }
-                    if (InOpen != null && InOpen.HeuristicValue>child.HeuristicValue)
+                    if (InOpen != null && InOpen.Level>child.Level)
                     {
                         InOpen.Level = child.Level;
                         InOpen.Parent = child.Parent;
                     }
-                    else if (InClosed != null && InClosed.HeuristicValue > child.HeuristicValue)
+                    else if (InClosed != null && InClosed.Level > child.Level)
                     {
                         Closed.Remove(InClosed);
                         Open.Add(child);
