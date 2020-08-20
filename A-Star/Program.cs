@@ -10,7 +10,7 @@ namespace A_Star
         static string[,] Goal { get; set; }
         static List<Node> Open { get; set; }
         static List<Node> Closed { get; set; }
-        class Node
+        public class Node
         {
             public string[,] Value { get; set; }
             public int Level { get; set; }
@@ -20,8 +20,8 @@ namespace A_Star
                     var h = 0;
                     for (var i = 0; i < Value.GetLength(0); i++)
                     {
-                        var DimensionLength = Value.GetLength(1);
-                        for (var j = 0; j < DimensionLength; j++)
+                        
+                        for (var j = 0; j < Value.GetLength(1); j++)
                         {
                             if (Value[i, j] != "_" && Value[i, j] != Goal[i, j])
                             {
@@ -33,19 +33,11 @@ namespace A_Star
                 }
             }
 
-            public int FScore 
-            { 
-                get
-                {
-                    return Level + HeuristicValue;
-                }
-
-            }
+            public int FScore => Level + HeuristicValue;
 
             public Node Parent { get; set; }
             public Node(string[,] NodeState, int level)
             {
-                //Value = NodeState;
                 Value= (string[,])NodeState.Clone();
                 Level = level;
             }
@@ -79,10 +71,11 @@ namespace A_Star
                     int Y = y.Value;
                     var PossibleMoves = new List<Tuple<int, int>>
                     {
+                        new Tuple<int, int>(X,Y-1),
+                        new Tuple<int, int>(X,Y+1),
                         new Tuple<int, int>(X-1,Y),
                         new Tuple<int, int>(X+1,Y),
-                        new Tuple<int, int>(X,Y-1),
-                        new Tuple<int, int>(X,Y+1)
+                        
                     };
 
                     foreach (var tuple in PossibleMoves)
@@ -161,7 +154,7 @@ namespace A_Star
         static Node AStar(Node root)
         {
             Open.Add(root);
-            while(Open.Count != 0)
+            while (Open.Count!=0)
             {
                 var node = Open.First();
                 Closed.Add(node);
@@ -180,15 +173,15 @@ namespace A_Star
                     {
                         return child;
                     }
-                    if (InOpen != null && InOpen.Level>child.Level)
-                    {
-                        InOpen.Level = child.Level;
-                        InOpen.Parent = child.Parent;
-                    }
-                    else if (InClosed != null && InClosed.Level > child.Level)
+                    if (InClosed != null && InClosed.Level > child.Level)
                     {
                         Closed.Remove(InClosed);
                         Open.Add(child);
+                    }
+                    else if (InOpen != null && InOpen.Level > child.Level)
+                    {
+                        InOpen.Level = child.Level;
+                        InOpen.Parent = child.Parent;
                     }
                     else
                     {
@@ -216,11 +209,11 @@ namespace A_Star
             //Display the moves from Initial state to goal state
             foreach(var node in Path) 
             {
-                var RowCount = node.Value.GetLength(0);
-                for (var i=0;i< RowCount; i++)
+                
+                for (var i=0;i< node.Value.GetLength(0); i++)
                 {
-                    var ColumnCount = node.Value.GetLength(1);
-                    for (var j=0;j< ColumnCount; j++)
+                    
+                    for (var j=0;j< node.Value.GetLength(1); j++)
                     {
                         Console.Write($"{node.Value[i,j]}\t");
                     }
