@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 
 namespace A_Star_2
@@ -44,7 +45,6 @@ namespace A_Star_2
                 var node = Open.First();
                 Closed.Add(node);
                 Open.RemoveAt(0);
-
                 if(node.Equals(goal))
                 {
                     return node;
@@ -85,6 +85,7 @@ namespace A_Star_2
                 Open.Sort((a, b) => a.FScore.CompareTo(b.FScore));
                 //Open= Open.OrderBy(x => x.FScore).ToList();
             }
+            Console.WriteLine("Unsolvable problem");
             return null;
         }
 
@@ -98,8 +99,12 @@ namespace A_Star_2
             Console.WriteLine("Enter the initial state");
             string[,] init = ReadState();
             var root = new Node(0, init);
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
             A_Star(root).GetPath().ForEach(x => Console.WriteLine(x));
-
+            watch.Stop();
+            Console.WriteLine("Time " + watch.Elapsed);
+            Console.WriteLine("Checked " + Closed.Count() + " state spaces");
             
         }
     }
