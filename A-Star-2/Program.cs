@@ -61,23 +61,29 @@ namespace A_Star_2
                         return child;
                     }
 
-                    if (nodeInOpen != null && nodeInOpen.Level > child.Level)
+                    if (nodeInOpen != null)
                     {
-                        Open.Remove(nodeInOpen);
-                        Open.Add(child);
+                        if (nodeInOpen.Level > child.Level)
+                        {
+                            Open.Remove(nodeInOpen);
+                            Open.Add(child);
+                        }
                     }
-                    else if (nodeInClosed != null && nodeInClosed.Level > child.Level)
+                    else if (nodeInClosed != null)
                     {
-                        Closed.Remove(nodeInClosed);
-                        Open.Add(child);
+                        if (nodeInClosed.Level > child.Level)
+                        {
+                            Closed.Remove(nodeInClosed);
+                            Open.Add(child);
+                        }
                     }
                     else
                     {
                         Open.Add(child);
                     }
                 }
-
-                Open= Open.OrderBy(x => x.FScore).ToList();
+                Open.Sort((a, b) => a.FScore.CompareTo(b.FScore));
+                //Open= Open.OrderBy(x => x.FScore).ToList();
             }
             return null;
         }
